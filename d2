@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <style>
+        body {
+            background-color: black;
+            color: rgb(84, 8, 226);
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+        }
+        img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover; 
+        }
+        header img {
+            height: 150px; 
+            width: auto; 
+        }
+        input, textarea, button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #999797;
+            border-radius: 5px;
+            background-color: transparent;
+            color: white;
+        }
+        button {
+            background-color: darkblue;
+            color: rgb(243, 242, 245);
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        button:hover {
+            background-color: rgb(110, 9, 241);
+        }
+        .hidden {
+            display: none;
+        }
+        .tenis-list {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .tenis-item {
+            background-color: #222;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #999797;
+        }
+        .tenis-item button {
+            background-color: red;
+            margin-top: 10px;
+        }
+        .publicar-container {
+            background-color: #222;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+        .swiper-container {
+            width: 100%;
+            height: 300px; 
+        }
+        .swiper-slide {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .comments-container {
+            margin-top: 10px;
+        }
+        .comment-item {
+            background-color: #222;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CBTis258</h1>
+        <img src="c:\Users\juan\Desktop\img-cbtis.png" alt="CBTis258">
+        <h2>Street Style</h2>
+    </header>
+    <main class="container">
+        <div id="registro">
+            <h3>Crea tu Cuenta</h3>
+            <input type="text" id="nombre" placeholder="Nombre de usuario" required>
+            <input type="password" id="contrasena" placeholder="Contraseña" required>
+            <input type="tel" id="telefono" placeholder="Número de teléfono" required>
+            <button id="btn-registro">Registrar</button>
+            <div id="mensaje-registro" class="hidden"></div>
+            <p>¿Ya tienes cuenta? <span id="link-login" style="color: blue; cursor: pointer;">Iniciar sesión</span></p>
+        </div>
+        <div id="login" class="hidden">
+            <h3>Iniciar Sesión</h3>
+            <input type="text" id="nombre-login" placeholder="Nombre de usuario" required>
+            <input type="password" id="contrasena-login" placeholder="Contraseña" required>
+            <button id="btn-login">Entrar</button>
+            <div id="mensaje-login" class="hidden"></div>
+            <p>¿No tienes cuenta? <span id="link-registro" style="color: blue; cursor: pointer;">Crear cuenta</span></p>
+        </div>
+        <div id="publicar" class="hidden publicar-container">
+            <h3>Publica tus Tenis En El CBTis 258</h3>
+            <form id="formulario-tenis">
+                <input type="text" id="modelo" placeholder="Modelo de los tenis" required>
+                <input type="number" id="precio" placeholder="Precio (MXN)" required min="1">
+                <textarea id="descripcion" placeholder="Detalles del calzado" required></textarea>
+                <input type="file" id="foto" accept="image/*" multiple required>
+                <button type="submit">Publicar Tenis</button>
+            </form>
+            <div id="resultado"></div>
+            <div class="tenis-list" id="lista-tenis"></div>
+        </div>
+    </main>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script>
+        const usuarios = JSON.parse(localStorage.getItem('usuarios')) || {};
+        const tenisPublicados = [];
+
+        document.getElementById('btn-registro').addEventListener('click', () => {
+            const nombre = document.getElementById('nombre').value;
+            const contrasena = document.getElementById('contrasena').value;
+            const telefono = document.getElementById('telefono').value;
+
+            if (nombre && contrasena && telefono) {
+                usuarios[nombre] = { contrasena, telefono }; // Almacena como objeto
+                localStorage.setItem('usuarios', JSON.stringify(usuarios));
+                mostrarMensaje('mensaje-registro', '¡Registro exitoso! Ya puedes iniciar sesión.');
+                toggleVisibilidad('registro', 'login');
+            } else {
+                mostrarMensaje('mensaje-registro', 'Por favor, completa todos los campos.');
+            }
+        });
+
+        document.getElementById('link-login').addEventListener('click', () => {
+            toggleVisibilidad('registro', 'login');
+        });
+
+        document.getElementById('link-registro').addEventListener('click', () => {
+            toggleVisibilidad('login', 'registro');
+        });
+
+        document.getElementById('btn-login').addEventListener('click', () => {
+            const nombre = document.getElementById('nombre-login').value;
+            const contrasena = document.getElementById('contrasena-login').value;
+
+            if (usuarios[nombre] && usuarios[nombre].contrasena === contrasena) {
+                mostrarMensaje('mensaje-login', '¡Inicio de sesión exitoso! Ahora puedes publicar tus tenis.');
+                toggleVisibilidad('login', 'publicar');
+
+                // Mostrar enlace para enviar mensaje
+                const telefono = usuarios[nombre].telefono;
+                const enlaceMensaje = `<a href="sms:${telefono}">Enviar mensaje a ${telefono}</a>`;
+                document.getElementById('resultado').innerHTML = enlaceMensaje; // Muestra el enlace
+            } else {
+                mostrarMensaje('mensaje-login', 'Usuario o contraseña incorrectos.');
+            }
+        });
+
+        document.getElementById('formulario-tenis').addEventListener('submit', event => {
+            event.preventDefault();
+            const modelo = document.getElementById('modelo').value;
+            const precio = document.getElementById('precio').value;
+            const descripcion = document.getElementById('descripcion').value;
+            const fotos = document.getElementById('foto').files;
+
+            const nuevoTenis = { modelo, precio, descripcion, fotos: [], comentarios: [] };
+
+            for (let i = 0; i < fotos.length; i++) {
+                nuevoTenis.fotos.push(URL.createObjectURL(fotos[i])); 
+            }
+
+            tenisPublicados.push(nuevoTenis);
+            mostrarMensaje('resultado', `¡Gracias! Has publicado tus tenis: ${modelo}, Precio: $${precio} MXN.`);
+            actualizarListaTenis();
+            document.getElementById('formulario-tenis').reset();
+        });
+
+        function mostrarMensaje(id, mensaje) {
+            const elemento = document.getElementById(id);
+            elemento.innerText = mensaje;
+            elemento.classList.remove('hidden');
+            setTimeout(() => elemento.classList.add('hidden'), 5000);
+        }
+
+        function toggleVisibilidad(ocultar, mostrar) {
+            document.getElementById(ocultar).classList.add('hidden');
+            document.getElementById(mostrar).classList.remove('hidden');
+        }
+
+        function actualizarListaTenis() {
+            const lista = document.getElementById('lista-tenis');
+            lista.innerHTML = '<h4>Tenis Publicados:</h4>';
+            
+            tenisPublicados.forEach((tenis, index) => {
+                lista.innerHTML += `
+                    <div class="tenis-item">
+                        <strong>${tenis.modelo}</strong><br>
+                        Precio: $${tenis.precio} MXN<br>
+                        Detalles: ${tenis.descripcion}<br>
+                        <div class="swiper-container" id="swiper-${index}">
+                            <div class="swiper-wrapper">
+                                ${tenis.fotos.map(foto => `<div class="swiper-slide"><img src="${foto}" alt="Tenis"></div>`).join('')}
+                            </div>
+                            <div class="swiper-pagination"></div>
+                            <div class="swiper-button-next"></div>
+                            <div class="swiper-button-prev"></div>
+                        </div>
+                        <div class="comments-container">
+                            <textarea placeholder="Deja tu comentario..." id="comment-${index}"></textarea>
+                            <button onclick="agregarComentario(${index})">Enviar Comentario</button>
+                            <div id="comments-${index}"></div>
+                        </div>
+                        <button type="button" onclick="eliminarTenis(${index})">Eliminar</button>
+                    </div>`;
+
+                const swiper = new Swiper(`#swiper-${index}`, {
+                    pagination: {
+                        el: `.swiper-pagination`,
+                        clickable: true,
+                    },
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+                });
+            });
+        }
+
+        function agregarComentario(index) {
+            const comentarioInput = document.getElementById(`comment-${index}`);
+            const comentario = comentarioInput.value;
+            if (comentario) {
+                tenisPublicados[index].comentarios.push(comentario);
+                mostrarComentarios(index);
+                comentarioInput.value = ''; 
+            }
+        }
+
+        function mostrarComentarios(index) {
+            const comentariosDiv = document.getElementById(`comments-${index}`);
+            comentariosDiv.innerHTML = tenisPublicados[index].comentarios.map(comentario => `<div class="comment-item">${comentario}</div>`).join('');
+        }
+
+        function eliminarTenis(index) {
+            tenisPublicados.splice(index, 1);
+            actualizarListaTenis();
+            mostrarMensaje('resultado', 'Tenis eliminados correctamente.');
+        }
+    </script>
+</body>
+</html>
