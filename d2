@@ -7,12 +7,29 @@
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <style>
         body {
-            background-color: black;
-            color: rgb(84, 8, 226);
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 20px;
+            background-image: url(th.jprg);
+            color: rgb(152, 148, 171);
+            font-family: 'times new roman', serif;
+            font-size: x-large;
+            margin: 20px;
+            padding: 30px;
             text-align: center;
+        }
+        header{
+            text-shadow: 0px 0px 10px white,
+                         0px 0px 20px white,
+                         0px 0px 40px white,
+                         0px 0px 60px white;
+            font-size: 50px;
+            color:rgb(152, 148, 171);             
+        }
+        h3{
+            text-shadow: 0px 0px 10px white,
+                         0px 0px 20px white,
+                         0px 0px 40px white,
+                         0px 0px 60px white;
+            font-size: 50px;
+            color:rgb(152, 148, 171);  
         }
         .container {
             max-width: 700px;
@@ -28,16 +45,25 @@
             width: auto; 
         }
         input, textarea, button {
+            color: white;
             width: 100%;
             margin: 10px 0;
             padding: 10px;
-            border: 1px solid #999797;
-            border-radius: 5px;
-            background-color: transparent;
-            color: white;
+            border: 2px solid transparent;
+            transition: all 0.4s ease-in ;
+            background: linear-gradient(black, black)
+            padding-box,
+                linear-gradient(45deg, blue, red) border-box;
+        }
+        input:is(:focus){
+            border: 3px black;
+            transition: all 0.2s ease;
+            background: linear-gradient(#121125, #121125)
+            padding-box,
+                linear-gradient(45deg, blue, red) border-box;
         }
         button {
-            background-color: darkblue;
+            background-color: rgb(3, 3, 3);
             color: rgb(243, 242, 245);
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease;
@@ -87,6 +113,43 @@
             padding: 10px;
             margin: 5px 0;
             border-radius: 5px;
+        }
+        .card{
+            width: 400px;
+            aspect-ratio: 1 / 0.7;
+            border-radius: 0px;
+            position: relative;
+        }
+        .card .img-box img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 
+              0.5s ease-in-out;
+        }
+        .card::after{
+            content: "";
+            position: absolute;
+            inset: 0;
+            border: 2px solid white;
+            border-radius: inherit;
+            opacity: 0;
+            transition: 0.4s ease-in-out;
+        }
+        .card:hover img{
+            filter: grayscale(1) brightness(0.4);
+        }
+        .card:hover::after{
+            opacity: 1;
+            inset: 20px;
+        }
+        .card:hover .content h3{
+            scale: 1;
+            opacity: 1;
+        }
+        .card:hover .content P{
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -138,7 +201,7 @@
             const telefono = document.getElementById('telefono').value;
 
             if (nombre && contrasena && telefono) {
-                usuarios[nombre] = { contrasena, telefono }; // Almacena como objeto
+                usuarios[nombre] = { contrasena, telefono }; 
                 localStorage.setItem('usuarios', JSON.stringify(usuarios));
                 mostrarMensaje('mensaje-registro', '¡Registro exitoso! Ya puedes iniciar sesión.');
                 toggleVisibilidad('registro', 'login');
@@ -163,10 +226,10 @@
                 mostrarMensaje('mensaje-login', '¡Inicio de sesión exitoso! Ahora puedes publicar tus tenis.');
                 toggleVisibilidad('login', 'publicar');
 
-                // Mostrar enlace para enviar mensaje
+                
                 const telefono = usuarios[nombre].telefono;
                 const enlaceMensaje = `<a href="sms:${telefono}">Enviar mensaje a ${telefono}</a>`;
-                document.getElementById('resultado').innerHTML = enlaceMensaje; // Muestra el enlace
+                document.getElementById('resultado').innerHTML = enlaceMensaje; 
             } else {
                 mostrarMensaje('mensaje-login', 'Usuario o contraseña incorrectos.');
             }
