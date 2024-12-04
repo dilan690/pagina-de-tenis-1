@@ -162,18 +162,22 @@
     <main class="container">
         <div id="registro">
             <h3>Crea tu Cuenta</h3>
+            <form id="form-registro">
             <input type="text" id="nombre" placeholder="Nombre de usuario" required>
             <input type="password" id="contrasena" placeholder="Contraseña" required>
             <input type="tel" id="telefono" placeholder="Número de teléfono" required>
             <button id="btn-registro">Registrar</button>
+            </form>
             <div id="mensaje-registro" class="hidden"></div>
             <p>¿Ya tienes cuenta? <span id="link-login" style="color: blue; cursor: pointer;">Iniciar sesión</span></p>
         </div>
         <div id="login" class="hidden">
             <h3>Iniciar Sesión</h3>
+            <form id="form-login">
             <input type="text" id="nombre-login" placeholder="Nombre de usuario" required>
             <input type="password" id="contrasena-login" placeholder="Contraseña" required>
             <button id="btn-login">Entrar</button>
+            </form>
             <div id="mensaje-login" class="hidden"></div>
             <p>¿No tienes cuenta? <span id="link-registro" style="color: blue; cursor: pointer;">Crear cuenta</span></p>
         </div>
