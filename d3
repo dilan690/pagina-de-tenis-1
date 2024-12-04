@@ -181,13 +181,14 @@
             <h3>Publica tus Tenis En El CBTis 258</h3>
             <form id="formulario-tenis">
                 <input type="text" id="modelo" placeholder="Modelo de los tenis" required>
-                <input type="number" id="precio" placeholder="Precio (MXN)" required min="1">
+                <input type="text" id="precio" placeholder="Precio (MXN)" required>
                 <textarea id="descripcion" placeholder="Detalles del calzado" required></textarea>
                 <input type="file" id="foto" accept="image/*" multiple required>
                 <button type="submit">Publicar Tenis</button>
             </form>
             <div id="resultado"></div>
             <div class="tenis-list" id="lista-tenis"></div>
+            <a href="index.html" style="color: blue; text-decoration: none; font-size: 20px;">Ir a publicar o ver Tenis</a>
         </div>
     </main>
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
@@ -221,14 +222,15 @@
         document.getElementById('btn-login').addEventListener('click', () => {
             const nombre = document.getElementById('nombre-login').value;
             const contrasena = document.getElementById('contrasena-login').value;
-
+            
             if (usuarios[nombre] && usuarios[nombre].contrasena === contrasena) {
                 mostrarMensaje('mensaje-login', '¡Inicio de sesión exitoso! Ahora puedes publicar tus tenis.');
                 toggleVisibilidad('login', 'publicar');
 
                 
                 const telefono = usuarios[nombre].telefono;
-                const enlaceMensaje = `<a href="sms:${telefono}">Enviar mensaje a ${telefono}</a>`;
+                const numeroWhatsapp = telefono.replace(/\D/g, ''); 
+                const enlaceMensaje = `<a href="https://wa.me/521234567890?text=¡Hola!%20Estoy%20interesado%20en%20los%20tenis." target="_blank">Enviar mensaje por WhatsApp</a>`;
                 document.getElementById('resultado').innerHTML = enlaceMensaje; 
             } else {
                 mostrarMensaje('mensaje-login', 'Usuario o contraseña incorrectos.');
@@ -290,6 +292,7 @@
                             <div id="comments-${index}"></div>
                         </div>
                         <button type="button" onclick="eliminarTenis(${index})">Eliminar</button>
+                         <a href="https://wa.me/521234567890?text=¡Hola!%20Estoy%20interesado%20en%20el%20modelo%20${tenis.modelo}" target="_blank">Enviar mensaje por WhatsApp</a>
                     </div>`;
 
                 const swiper = new Swiper(`#swiper-${index}`, {
